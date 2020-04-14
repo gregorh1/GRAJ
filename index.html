@@ -5,32 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gra planszowa Wylot</title>
     <link href="main.css" type="text/css"  rel="stylesheet" />
+    <script src="/main.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="container">
-    <div class="center">
-        <div class="center-middle">
-            <div class="card">1</div>
-            <div class="card">2</div>
-            <div class="card">3</div>
-
-            <div class="card">4</div>
-            <div class="card">5</div>
-            <div class="card">6</div>
-
-            <div class="card">7</div>
-            <div class="card">8</div>
-            <div class="card">9</div>
+        <div class="center">
+            <div class="center-middle js-board-container">
+            </div>
+            <div class="player-window">
+                <div class="dice-button js-dice"></div>
+                <div class="skip-button js-end-round"></div>
+            </div>
+            <div class="player-list js-players-tabs-container">
+            </div>
         </div>
-        <div class="player-window">
-            <div class="dice-button"></div>
-            <div class="skip-button"></div>
+        <div class="start-dialog js-start-dialog">
+            <div class="start-label">Ustaw<br>liczbę<br>graczy</div>
+            <button class="start-button js-add">+</button>
+            <div class="start-number js-start-players-number">2</div>
+            <button class="start-button js-substract">-</button>
+            <button class="start-button play js-start-play">Zagraj</button>
         </div>
-        <div class="player-list">
-            <div class="player-tab">sbsb</div>
-            <div class="player-tab">fbng</div>
-        </div>
-    </div>
     </div>
 </body>
 </html>
