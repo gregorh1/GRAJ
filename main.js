@@ -11,16 +11,17 @@ const cards = [
 ]
 
 let state = {
-    numberOfPlayers: 0,
+    numberOfPlayers: 2,
     cardsStack: [],
     cardsOnBoard: [],
-    onDice: '',
+    onDice: null,
     currentPlayer: 'player0',
     mustEndTurn: false,
     revealedCards: [],
 }
 
 function onStartGame(howManyPlayers) {
+    document.querySelector('.js-start-dialog').style.display = 'none';
     const playersTabsContainer = document.querySelector('.js-players-tabs-container');
     const players = {};
     for (let i = 0; i < howManyPlayers; i++) {
@@ -57,6 +58,7 @@ function onCardClick(e) {
         if (cardBeforBalast && parseInt(cardValue) > parseInt(cardBeforBalast.cardValue)) {
             state = {
                 ...state,
+                revealedCards: [],
                 mustEndTurn: true,
             }
             return;
@@ -65,6 +67,7 @@ function onCardClick(e) {
         if (parseInt(cardValue) < parseInt(previousCard.cardValue)) {
             state = {
                 ...state,
+                revealedCards: [],
                 mustEndTurn: true,
             }
             return;
@@ -87,7 +90,7 @@ function onCardClick(e) {
 }
 
 function throwDice() {
-    if (state.onDice != '') return;
+    if (state.onDice != null) return;
     const diceEl = document.querySelector('.js-dice');
     const onDice = Math.floor(Math.random() * Math.floor(5)); // losowanie 0-5
     diceEl.innerText = onDice;
@@ -160,8 +163,8 @@ function endRound() {
 
     const currentPlayerNumber = parseInt(state.currentPlayer.slice(6, state.currentPlayer.length));
     let newCurrentPlayer = ''
-    if (currentPlayerNumber === state.numberOfPlayers -1) newCurrentPlayer = 'player0';
-    else newCurrentPlayer = `player${currentPlayerNumber + 1}`;    
+    if (currentPlayerNumber === state.numberOfPlayers - 1) newCurrentPlayer = 'player0';
+    else newCurrentPlayer = `player${currentPlayerNumber + 1}`;
     document.querySelector(`.js-player${currentPlayerNumber}`).innerText = state[state.currentPlayer].score;
     document.querySelector('.js-dice').innerText = '';
 
@@ -169,15 +172,33 @@ function endRound() {
         ...state,
         cardsOnBoard,
         cardsStack,
-        onDice: '',
+        onDice: null,
         revealedCards: [],
         mustEndTurn: false,
         currentPlayer: newCurrentPlayer,
     }
 }
 
+function setPlayersNumber(isAdd) {
+    const el = document.querySelector('.js-start-players-number');
+    const prevNum = parseInt(el.innerText);
+    let num = prevNum;
+    if (isAdd === 'add' && prevNum < 5) num += 1;
+    else if (isAdd !== 'add' && prevNum > 2) num -= 1
+    
+    el.innerText = num;
+
+    state = {
+        ...state,
+        numberOfPlayers: num,
+    }
+}
+
 window.addEventListener('load', () => {
-    onStartGame(2);
     document.querySelector('.js-dice').addEventListener('click', throwDice);
+    document.querySelector('.js-end-round').addEventListener('click', endRound);
+    document.querySelector('.js-add').addEventListener('click', () => setPlayersNumber('add'));
+    document.querySelector('.js-substract').addEventListener('click', () => setPlayersNumber());
+    document.querySelector('.js-start-play').addEventListener('click', () => onStartGame(state.numberOfPlayers));
     document.querySelector('.js-end-round').addEventListener('click', endRound);
 })
