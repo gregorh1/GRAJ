@@ -78,7 +78,7 @@ function appendCardsToDom(cardsArr) {
         card.classList.add('card');
         card.setAttribute('data-card', el);
         card.setAttribute('data-index', i);
-        card.innerText = el; // to remove
+        // card.innerText = el; // to remove
         card.addEventListener('click', onCardClick);
         boardContainer.appendChild(card);
     })
