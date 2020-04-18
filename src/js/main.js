@@ -1,9 +1,9 @@
-// import anime from 'animejs/lib/anime.es.js';
+const anime = require('animejs');
 
 const config = {
     logs: false,
     debugMode: false,
-}
+};
 
 function setState(newProps) {
     // dom manipulation depending on state changing
@@ -43,7 +43,7 @@ function setState(newProps) {
     state = {
         ...state,
         ...newProps
-    }
+    };
     if (config.logs) {
         console.log('%c new state: ', 'color: green; font-weight: 600', state);
         console.log('%c -', 'color: grey; font-weight: 600');

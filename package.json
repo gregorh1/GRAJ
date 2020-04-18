@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "start": "beefy server.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +19,10 @@
   "homepage": "https://github.com/gregorh1/GRAJ#readme",
   "dependencies": {
     "animejs": "^3.2.0"
+  },
+  "devDependencies": {
+    "beefy": "^2.1.8",
+    "browserify": "^16.5.1",
+    "watchify": "^3.11.1"
   }
 }
