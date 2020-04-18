@@ -1,17 +1,54 @@
-* {
-    font-family: monospace;
-}
+/* secondary */
+.color { color: #FF5858 }
+.color { color: #FFF3F3 }
+.color { color: #FF9A9A }
+.color { color: #FF1919 }
+.color { color: #FF0000 }
+
+/* primary */
+.color { color: #FFA358 }
+.color { color: #FFF8F3 }
+.color { color: #FFC89A }
+.color { color: #FF8119 }
+.color { color: #FF7400 }
+
+.color { color: #53F1F1 }
+.color { color: #F2FEFE }
+.color { color: #94F4F4 }
+.color { color: #17F0F0 }
+.color { color: #00EEEE }
+
+.color { color: #55F855 }
+.color { color: #F3FFF3 }
+.color { color: #97FA97 }
+.color { color: #18F818 }
+.color { color: #00F600 }
+
 
 :root {
-    --background-color: #365D8A;
-    --card-color: #204976;
-    --dice-button-color: #64378E;
-    --skip-button-color: #64378E;
-    --player-tab-color: #2B7E7E;
+    --cl-bgr: #FFF8F3;
+    --cl-primary: #FF7400;
+    --cl-secondary: #00EEEE;
+    --cl-font-primary: #006565;
+    --cl-font-light: #efefef;
+    /* --cl-font-secondary: ; */
+    --cl-bgr2: #F3FFF3;
+    --cl-primary2: #FF0000;
+    --cl-secondary2: #55F855;
+    --cl-font-primary2: #006565;
+    /* --cl-font-secondary2: ; */
+    
+    --border-redious: 5px;
+    
+}
+
+* {
+    font-family: monospace;
+    color: var(--cl-font-primary);
 }
 
 body {
-    background-color: var(--background-color);
+    background-color: var(--cl-bgr);
     margin: 0;
 }
 
@@ -20,15 +57,8 @@ body {
     height: 100%;
 }
 
-.center {
-    background-color: var(--background-color);
-    float: left;
-    height: 100vh;
-    width: 100%;
-}
-
-.center-middle {
-    background-color: var(--background-color);
+.cards-board {
+    background-color: var(--cl-bgr);
     height: 70vh;
     justify-content: space-evenly;
     align-items: center;
@@ -39,17 +69,23 @@ body {
 }
 
 .card {
-    background-color: var(--card-color);
+    background-color: var(--cl-primary);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     width: 30%;
     height: 30%;
-    border-radius: 3px;
+    border-radius: var(--border-redious);
+    color: var(--cl-font-light);
+    font-size: 70px;
 }
 
-.player-window {
-    background-color: var(--background-color);
+.card.no-number {
+    font-size: 25px;
+}
+
+.action-board {
+    background-color: var(--cl-bgr);
     height: 20vh;
     justify-content: space-evenly;
     display: flex;
@@ -57,45 +93,70 @@ body {
 }
 
 .player-list {
-    height: 10vh;
+    height: calc(10vh - 16px);
     display: flex;
+    margin: 8px;
 }
 
 .player-tab {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     width: -webkit-fill-available;
     text-align: center;
     border-top: 0;
-    background-color: var(--background-color);
+    background-color: var(--cl-bgr);
     font-size: 30px;
+    border-radius: var(--border-redious);
+    box-sizing: border-box;
 }
 
 .player-tab.active {
-    background-color: var(--player-tab-color);
+    background-color: var(--cl-secondary);
+}
+
+.player-tab::before, .player-tab::after {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.player-tab.succeed::before, .player-tab.succeed::after {
+    content: '';
+    background: #55F855;
+}
+
+.player-tab.fail::before, .player-tab.fail::after {
+    content: '';
+    background: #FF5858;
+}
+
+.action-board--item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--cl-secondary);
+    width: 25vw;
+    height: 15vh;
+    border-radius: var(--border-redious);
+    box-sizing: border-box;
+    font-size: 20px;
+    text-align: center;
+}
+
+.stack {
+    background-color: var(--cl-primary);
+    color: var(--cl-font-light);
+    font-size: 40px;
 }
 
 .dice-button {
-    background-color: var(--dice-button-color);
-    width: 25vw;
-    height: 15vh;
-    border-radius: 10px;
-    padding-top: 25px;
-    box-sizing: border-box;
     font-size: 20px;
-    text-align: center;
 }
 
-.skip-button {
-    background-color: var(--skip-button-color);
-    width: 25vw;
-    height: 15vh;
-    border-radius: 10px;
-    padding-top: 25px;
-    box-sizing: border-box;
-    font-size: 20px;
-    text-align: center;
+.dice-button.is-number {
+    font-size: 40px;
 }
 
 .start-dialog {
@@ -108,9 +169,10 @@ body {
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    background: var(--background-color);
-    border-radius: 20px;
-    border: 3px solid var(--dice-button-color);
+    background: var(--cl-bgr2);
+    border-radius: var(--border-redious);
+    border: 2px solid var(--cl-secondary2);
+    box-shadow: 0px 0px 20px 20px #0000002e;
 }
 
 .start-label {
@@ -121,21 +183,20 @@ body {
 .start-button {
     height: 60px;
     width: 60px;
-    background: green;
-    border: 2px solid var(--dice-button-color);
-    border-radius: 50%;
+    background: var(--cl-secondary2);
+    border: 2px solid var(--cl-font-primary2);
+    border-radius: var(--border-redious);
     font-size: 40px;
 }
 
 .start-number {
     font-size: 70px;
-    color: var(--skip-button-color);
 }
 
 .play {
     height: 60px;
     width: 160px;
-    border-radius: 10px;
+    border-radius: var(--border-redious);
     font-size: 25px;
     margin-top: 40px;
 }
