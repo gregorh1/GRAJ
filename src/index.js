@@ -1,9 +1,10 @@
-// import anime from 'animejs/lib/anime.es.js';
+import anime from 'animejs/lib/anime.es.js';
+import './style.css'
 
 const config = {
-    logs: false,
+    logs: true,
     debugMode: false,
-}
+};
 
 function setState(newProps) {
     // dom manipulation depending on state changing
@@ -35,7 +36,7 @@ function setState(newProps) {
     }
 
     if (config.logs) {
-        console.log('%c caller: ', 'color: grey; font-weight: 600', arguments.callee.caller.name, new Date().toISOString().slice(11,19));
+        // console.log('%c caller: ', 'color: grey; font-weight: 600', arguments.callee.caller.name, new Date().toISOString().slice(11,19));
         console.log('%c prev state: ', 'color: red; font-weight: 600', state);
         console.log('%c new props: ', 'color: orange; font-weight: 600', newProps);
     }
@@ -43,7 +44,7 @@ function setState(newProps) {
     state = {
         ...state,
         ...newProps
-    }
+    };
     if (config.logs) {
         console.log('%c new state: ', 'color: green; font-weight: 600', state);
         console.log('%c -', 'color: grey; font-weight: 600');
