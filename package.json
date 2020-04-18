@@ -2,6 +2,7 @@
   "name": "graj",
   "version": "1.0.0",
   "description": "",
+  "main": "./dist/index.html",
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --open",
