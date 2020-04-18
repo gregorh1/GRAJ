@@ -1,12 +1,28 @@
+// import anime from 'animejs/lib/anime.es.js';
+
+const config = {
+    logs: false,
+    debugMode: false,
+}
+
 function setState(newProps) {
     // dom manipulation depending on state changing
     if (newProps.mustEndTurn && newProps.mustEndTurn !== state.mustEndTurn) {
         document.querySelector('.js-end-round').innerText = 'zakończ rundę';
+        const activePlayerTab = document.querySelector('.js-players-tabs-container .active');
+        if (newProps[state.currentPlayer] && newProps[state.currentPlayer].score !== state[state.currentPlayer].score) {
+            activePlayerTab.classList.add('succeed')
+        } else activePlayerTab.classList.add('fail');
     }
     if (newProps.onDice === 'rzuć kostką') {
         document.querySelector('.js-end-round').innerText = '';
+        document.querySelector('.js-dice').classList.remove('is-number');
     }
-    if (newProps.onDice && newProps.onDice !== state.onDice) document.querySelector('.js-dice').innerText = newProps.onDice;
+    if (newProps.onDice && newProps.onDice !== state.onDice) {
+        const diceEl = document.querySelector('.js-dice');
+        diceEl.innerText = newProps.onDice;
+        if (newProps.onDice !== 0 && newProps.onDice !== 'rzuć kostką') diceEl.classList.add('is-number');
+    }
     if (newProps.onDice === 0) document.querySelector('.js-dice').innerText = 'chmurka';
     if (newProps.cardsStack && newProps.cardsStack.length !== 0) document.querySelector('.js-start-dialog').style.display = 'none';
     if (newProps.gameEnded) document.querySelector('.js-dice').innerText = 'koniec gry';
@@ -14,23 +30,27 @@ function setState(newProps) {
     if (newProps.currentPlayer && newProps.currentPlayer !== state.currentPlayer) {
         const playerTab = document.querySelector(`.js-${state.currentPlayer}`)
         playerTab.innerText = state[state.currentPlayer].score;
-        playerTab.classList.remove('active');
+        playerTab.classList.remove('active', 'succeed', 'fail');
         document.querySelector(`.js-${newProps.currentPlayer}`).classList.add('active');
     }
 
+    if (config.logs) {
+        console.log('%c caller: ', 'color: grey; font-weight: 600', arguments.callee.caller.name, new Date().toISOString().slice(11,19));
+        console.log('%c prev state: ', 'color: red; font-weight: 600', state);
+        console.log('%c new props: ', 'color: orange; font-weight: 600', newProps);
+    }
     // setting the state
-    console.log('%c caller: ', 'color: grey; font-weight: 600', arguments.callee.caller.name, new Date().toISOString().slice(11,19));
-    console.log('%c prev state: ', 'color: red; font-weight: 600', state);
-    console.log('%c new props: ', 'color: orange; font-weight: 600', newProps);
     state = {
         ...state,
         ...newProps
     }
-    console.log('%c new state: ', 'color: green; font-weight: 600', state);
-    console.log('%c -', 'color: grey; font-weight: 600');
+    if (config.logs) {
+        console.log('%c new state: ', 'color: green; font-weight: 600', state);
+        console.log('%c -', 'color: grey; font-weight: 600');
+    }
 
     // dom manipulation after state has changed
-    document.querySelector('.js-stack').innerText = `kart na stosie: ${state.cardsStack.length}`;
+    document.querySelector('.js-stack').innerText = state.cardsStack.length;
 }
 
 let state = {
@@ -51,7 +71,7 @@ const cards = [
     40, 40, 40, 40, 40, 40,
     50, 50, 50, 50, 50, 50,
     60, 60, 60, 60, 60, 60,
-    'tecza', 'tecza', 'tecza',
+    'tęcza', 'tęcza', 'tęcza',
     'stop', 'stop', 'stop',
     'balast', 'balast', 'balast',
 ]
@@ -73,12 +93,13 @@ function setPlayersNumber(isAdd) {
 function appendCardsToDom(cardsArr) {
     const boardContainer = document.querySelector('.js-board-container')
     boardContainer.innerHTML = '';
-    cardsArr.forEach((el, i) => {
+    cardsArr.forEach((cardValue, i) => {
         const card = document.createElement('div');
         card.classList.add('card');
-        card.setAttribute('data-card', el);
+        if (isNaN(cardValue)) card.classList.add('no-number')
+        card.setAttribute('data-card', cardValue);
         card.setAttribute('data-index', i);
-        // card.innerText = el; // to remove
+        if (config.debugMode) card.innerText = cardValue; // debug
         card.addEventListener('click', onCardClick);
         boardContainer.appendChild(card);
     })
@@ -146,7 +167,7 @@ function onCardClick(e) {
     const cardValue = e.target.getAttribute('data-card');
     const cardIndex = e.target.getAttribute('data-index');
     e.target.innerText = cardValue;
-    e.target.style.color = 'red'
+    if (config.debugMode) e.target.style.color = 'green' // debug
     const revealedCards = state.revealedCards;
     if (cardValue === 'balast') {
         setState({
@@ -154,9 +175,11 @@ function onCardClick(e) {
         })
     }
     if (revealedCards.findIndex(el => el.cardIndex === cardIndex) === -1) revealedCards.push({ cardIndex, cardValue });
-    const previousCard = revealedCards[revealedCards.length - 2];
-    if (previousCard && previousCard === 'balast') {
+    const previousCard = revealedCards[revealedCards.length - 2];    
+    if (previousCard && previousCard.cardValue === 'balast') {
         const cardBeforBalast = revealedCards[revealedCards.length - 3];
+        console.log('cardValue: ', cardValue, 'cardBeforBalast: ', cardBeforBalast);
+        
         if (cardBeforBalast && parseInt(cardValue) > parseInt(cardBeforBalast.cardValue)) {
             setState({
                 revealedCards: [],
