@@ -2,8 +2,12 @@
   "name": "graj",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "./dist/index.html",
+  "private": true,
   "scripts": {
+    "start": "webpack-dev-server --open",
+    "watch": "npx webpack --config ./webpack.config.js --watch",
+    "build": "npx webpack --config ./webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +22,14 @@
   "homepage": "https://github.com/gregorh1/GRAJ#readme",
   "dependencies": {
     "animejs": "^3.2.0"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.5.2",
+    "html-webpack-plugin": "^4.2.0",
+    "style-loader": "^1.1.4",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }
