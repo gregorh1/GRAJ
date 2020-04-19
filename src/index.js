@@ -1,22 +1,34 @@
 import anime from 'animejs/lib/anime.es.js';
-import './style.css'
+import './style.css';
 
 const config = {
-    logs: true,
+    logs: false,
     debugMode: false,
 };
 
 function setState(newProps) {
-    // dom manipulation depending on state changing
     if (newProps.mustEndTurn && newProps.mustEndTurn !== state.mustEndTurn) {
-        document.querySelector('.js-end-round').innerText = 'zakończ rundę';
+        anime({
+            targets: '.js-end-round',
+            scale: '1',
+            opacity: '1',
+            duration: 200,
+            delay: 300,
+            easing: 'easeInQuart',
+        });
         const activePlayerTab = document.querySelector('.js-players-tabs-container .active');
         if (newProps[state.currentPlayer] && newProps[state.currentPlayer].score !== state[state.currentPlayer].score) {
             activePlayerTab.classList.add('succeed')
         } else activePlayerTab.classList.add('fail');
     }
     if (newProps.onDice === 'rzuć kostką') {
-        document.querySelector('.js-end-round').innerText = '';
+        anime({
+            targets: '.js-end-round',
+            scale: '0',
+            opacity: '0',
+            duration: 200,
+            easing: 'easeInQuart',
+        });
         document.querySelector('.js-dice').classList.remove('is-number');
     }
     if (newProps.onDice && newProps.onDice !== state.onDice) {
@@ -25,11 +37,10 @@ function setState(newProps) {
         if (newProps.onDice !== 0 && newProps.onDice !== 'rzuć kostką') diceEl.classList.add('is-number');
     }
     if (newProps.onDice === 0) document.querySelector('.js-dice').innerText = 'chmurka';
-    if (newProps.cardsStack && newProps.cardsStack.length !== 0) document.querySelector('.js-start-dialog').style.display = 'none';
     if (newProps.gameEnded) document.querySelector('.js-dice').innerText = 'koniec gry';
 
     if (newProps.currentPlayer && newProps.currentPlayer !== state.currentPlayer) {
-        const playerTab = document.querySelector(`.js-${state.currentPlayer}`)
+        const playerTab = document.querySelector(`.js-${state.currentPlayer}`);
         playerTab.innerText = state[state.currentPlayer].score;
         playerTab.classList.remove('active', 'succeed', 'fail');
         document.querySelector(`.js-${newProps.currentPlayer}`).classList.add('active');
@@ -63,7 +74,7 @@ let state = {
     mustEndTurn: false,
     revealedCards: [],
     gameEnded: false,
-}
+};
 
 const cards = [
     10, 10, 10, 10, 10, 10,
@@ -75,29 +86,27 @@ const cards = [
     'tęcza', 'tęcza', 'tęcza',
     'stop', 'stop', 'stop',
     'balast', 'balast', 'balast',
-]
+];
 
 function setPlayersNumber(isAdd) {
     const el = document.querySelector('.js-start-players-number');
     const prevNum = parseInt(el.innerText);
     let num = prevNum;
     if (isAdd === 'add' && prevNum < 5) num += 1;
-    else if (isAdd !== 'add' && prevNum > 2) num -= 1
-    
+    else if (isAdd !== 'add' && prevNum > 2) num -= 1;
     el.innerText = num;
-
     setState({
         numberOfPlayers: num,
     })
 }
 
 function appendCardsToDom(cardsArr) {
-    const boardContainer = document.querySelector('.js-board-container')
+    const boardContainer = document.querySelector('.js-board-container');
     boardContainer.innerHTML = '';
     cardsArr.forEach((cardValue, i) => {
         const card = document.createElement('div');
         card.classList.add('card');
-        if (isNaN(cardValue)) card.classList.add('no-number')
+        if (isNaN(cardValue)) card.classList.add('no-number');
         card.setAttribute('data-card', cardValue);
         card.setAttribute('data-index', i);
         if (config.debugMode) card.innerText = cardValue; // debug
@@ -126,8 +135,8 @@ function onStartGame() {
     for (let i = 0; i < state.numberOfPlayers; i++) {
         players['player' + i] = {
             score: 0,
-        }
-        const playerTab = document.createElement('div')
+        };
+        const playerTab = document.createElement('div');
         playerTab.classList.add('player-tab', `js-player${i}`);
         if (i === 0) playerTab.classList.add('active');
         playerTab.innerText = '0';
@@ -136,56 +145,92 @@ function onStartGame() {
     setState({
         cardsStack: cards.slice(),
         ...players,
-    })
+    });
     setCardsOnBoard();
+    anime({
+        targets: '.js-start-dialog',
+        translateY: {value: '-110vh', delay: 250},
+        translateX: {value: '150vw', delay: 250},
+        rotate: 540,
+        scale: '.1',
+        easing: 'easeInQuad',
+        duration: 400,
+    });
+    anime({
+        targets: '.js-end-round',
+        scale: '0',
+        opacity: '0',
+        duration: 200,
+        delay: 300,
+        easing: 'easeInQuart',
+    });
 }
 
 function throwDice() {
-    if (state.onDice != 'rzuć kostką' || state.gameEnded) return;
+    const duration = 700;
+    if (state.onDice !== 'rzuć kostką' || state.gameEnded) return;
     const onDice = Math.floor(Math.random() * Math.floor(5)); // set random number from 0 to 5
-    if (onDice === 0) {
-        const cardsStack = state.cardsStack
-        if (cardsStack.length === 0) return;
-        const randomIndex = Math.floor(cardsStack.length * Math.random());
-        cardsStack.splice(randomIndex, 1);
+
+    anime({
+        targets: '.js-dice',
+        scale: [
+            {value: '.1', duration: duration / 2},
+            {value: '1', duration: duration / 2},
+        ],
+        rotate: [
+            {value: '720', duration: duration},
+            {value: '0', duration: 0, delay: duration},
+        ],
+        easing: 'linear',
+    });
+    setTimeout(() => {
+        if (onDice === 0) {
+            const cardsStack = state.cardsStack;
+            if (cardsStack.length === 0) return;
+            const randomIndex = Math.floor(cardsStack.length * Math.random());
+            cardsStack.splice(randomIndex, 1);
+            setState({
+                onDice,
+                mustEndTurn: true,
+                cardsStack,
+                [state.currentPlayer]: {
+                    score: state[state.currentPlayer].score + 1,
+                }
+            });
+            return;
+        }
         setState({
-            onDice,
-            mustEndTurn: true,
-            cardsStack,
-            [state.currentPlayer]: {
-                score: state[state.currentPlayer].score + 1,
-            }
-        })
-        return;
-    }
-    setState({
-        onDice
-    })
+            onDice
+        });
+    }, duration / 2)
 }
 
 function onCardClick(e) {
-    if (state.mustEndTurn || state.revealedCards.length >= state.onDice || state.onDice === 'rzuć kostką') return;
+    if (state.mustEndTurn || state.revealedCards.length >= state.onDice || state.onDice === 'rzuć kostką' || e.target.innerText) return;
     const cardValue = e.target.getAttribute('data-card');
     const cardIndex = e.target.getAttribute('data-index');
-    e.target.innerText = cardValue;
-    if (config.debugMode) e.target.style.color = 'green' // debug
+    anime({
+        targets: e.target,
+        scaleX: ['-1', '1'],
+        duration: 1000,
+    });
+    setTimeout(() => {e.target.innerText = cardValue;}, 100);
+    if (config.debugMode) e.target.style.color = 'green'; // debug
     const revealedCards = state.revealedCards;
     if (cardValue === 'balast') {
         setState({
             onDice: state.onDice + 1,
         })
     }
-    if (revealedCards.findIndex(el => el.cardIndex === cardIndex) === -1) revealedCards.push({ cardIndex, cardValue });
-    const previousCard = revealedCards[revealedCards.length - 2];    
+    if (revealedCards.findIndex(el => el.cardIndex === cardIndex) === -1) revealedCards.push({cardIndex, cardValue});
+    const previousCard = revealedCards[revealedCards.length - 2];
     if (previousCard && previousCard.cardValue === 'balast') {
         const cardBeforBalast = revealedCards[revealedCards.length - 3];
-        console.log('cardValue: ', cardValue, 'cardBeforBalast: ', cardBeforBalast);
-        
         if (cardBeforBalast && parseInt(cardValue) > parseInt(cardBeforBalast.cardValue)) {
             setState({
                 revealedCards: [],
                 mustEndTurn: true,
-            })
+            });
             return;
         }
     } else if (previousCard && cardValue !== 'stop') {
@@ -193,7 +238,7 @@ function onCardClick(e) {
             setState({
                 revealedCards: [],
                 mustEndTurn: true,
-            })
+            });
             return;
         }
     }
@@ -203,9 +248,9 @@ function onCardClick(e) {
             [state.currentPlayer]: {
                 score: state[state.currentPlayer].score + revealedCards.length,
             }
-        })
+        });
         return
-    };
+    }
     setState({
         revealedCards,
     })
@@ -215,20 +260,20 @@ function endRound() {
     if (!state.mustEndTurn) return;
     const revealedCards = state.revealedCards;
     const indexes = revealedCards.reduce((acc, el) => {
-        acc.push(parseInt(el.cardIndex))
+        acc.push(parseInt(el.cardIndex));
         return acc;
-    }, [])
+    }, []);
     const cardsStack = state.cardsStack;
     const cardsOnBoard = state.cardsOnBoard;
     indexes.forEach((index) => {
         const randomIndex = Math.floor(cardsStack.length * Math.random());
         cardsOnBoard[index] = cardsStack[randomIndex];
         cardsStack.splice(randomIndex, 1);
-    })
+    });
     appendCardsToDom(cardsOnBoard);
 
     const currentPlayerNumber = parseInt(state.currentPlayer.slice(6, state.currentPlayer.length));
-    let newCurrentPlayer = ''
+    let newCurrentPlayer;
     if (currentPlayerNumber === state.numberOfPlayers - 1) newCurrentPlayer = 'player0';
     else newCurrentPlayer = `player${currentPlayerNumber + 1}`;
     let gameEnded = false;
@@ -254,4 +299,4 @@ window.addEventListener('load', () => {
     document.querySelector('.js-substract').addEventListener('click', () => setPlayersNumber());
     document.querySelector('.js-start-play').addEventListener('click', () => onStartGame());
     setState({}); // for logs
-})
+});

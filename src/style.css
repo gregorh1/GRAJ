@@ -104,6 +104,7 @@ body {
     justify-content: center;
     align-items: center;
     width: -webkit-fill-available;
+    width: -moz-available;
     text-align: center;
     border-top: 0;
     background-color: var(--cl-bgr);
