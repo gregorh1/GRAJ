@@ -31,15 +31,15 @@
     --cl-secondary: #00EEEE;
     --cl-font-primary: #006565;
     --cl-font-light: #efefef;
-    /* --cl-font-secondary: ; */
+
     --cl-bgr2: #F3FFF3;
     --cl-primary2: #FF0000;
     --cl-secondary2: #55F855;
     --cl-font-primary2: #006565;
-    /* --cl-font-secondary2: ; */
-    
+
     --border-redious: 5px;
-    
+    --card-box-shadow: 2px 2px 8px 2px #00000066;
+
 }
 
 * {
@@ -78,6 +78,7 @@ body {
     border-radius: var(--border-redious);
     color: var(--cl-font-light);
     font-size: 70px;
+    box-shadow: var(--card-box-shadow);
 }
 
 .card.no-number {
@@ -150,6 +151,7 @@ body {
     background-color: var(--cl-primary);
     color: var(--cl-font-light);
     font-size: 40px;
+    box-shadow: var(--card-box-shadow);
 }
 
 .dice-button {
@@ -200,4 +202,13 @@ body {
     border-radius: var(--border-redious);
     font-size: 25px;
     margin-top: 40px;
+}
+
+.svg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    height: 100vh;
+    width: 100vw;
 }
