@@ -49,7 +49,6 @@ function setState(newProps) {
     }
 
     if (config.logs) {
-        // console.log('%c caller: ', 'color: grey; font-weight: 600', arguments.callee.caller.name, new Date().toISOString().slice(11,19));
         console.log('%c prev state: ', 'color: red; font-weight: 600', state);
         console.log('%c new props: ', 'color: orange; font-weight: 600', newProps);
     }
@@ -62,9 +61,6 @@ function setState(newProps) {
         console.log('%c new state: ', 'color: green; font-weight: 600', state);
         console.log('%c -', 'color: grey; font-weight: 600');
     }
-
-    // dom manipulation after state has changed
-    // document.querySelector('.js-stack').innerText = state.cardsStack.length;
 }
 
 let state = {
@@ -276,7 +272,7 @@ function endRound() {
         cardsOnBoard[index] = cardsStack[randomIndex];
         cardsStack.splice(randomIndex, 1);
     });
-    if (document.querySelector('.js-player-tab.active.succeed')) {
+    if (document.querySelector('.js-player-tab.active.succeed')) { // to słabe - przeniesc do state
         animateLinesToTarget('.js-revealed');
         setTimeout(() => {
             appendCardsToDom(cardsOnBoard);
@@ -299,7 +295,6 @@ function endRound() {
     if (document.querySelector('.js-player-tab.active.succeed') && state.onDice === 0) {
         animateLinesToTarget('.js-stack');
     }
-    // document.querySelector('.js-stack').innerText = state.cardsStack.length;
 
     const currentPlayerNumber = parseInt(state.currentPlayer.slice(6, state.currentPlayer.length));
     let newCurrentPlayer;
