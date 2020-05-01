@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">graj</string>
+    <string name="title_activity_main">graj</string>
+    <string name="package_name">pl.devgreg.graj</string>
+    <string name="custom_url_scheme">pl.devgreg.graj</string>
+</resources>
